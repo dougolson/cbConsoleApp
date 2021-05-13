@@ -7,7 +7,6 @@ using CoinbasePro.Network.Authentication;
 using CoinbasePro.Shared.Types;
 using CoinbasePro.Services.Products.Types;
 using System.IO;
-using CsvHelper;
 using System.Globalization;
 
 
@@ -19,7 +18,19 @@ namespace CoinbaseConsoleApp
         public static Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
             {
                 { "BtcUsd", "Bitcoin"},
-                { "EthUsd", "Ethereum"}
+                { "EthUsd", "Ethereum"},
+                { "AnkrUsd", "ANKR" },
+                { "AdaUsd", "Cardano" },
+                { "EosUsd", "EOS" },
+                { "LrcUsd", "Loopring" },
+                { "MkrUsd", "Maker" },
+                { "NknUsd", "NKN" },
+                { "NuUsd", "NuCypher" },
+                { "OmgUsd", "OmgNetwork" },
+                { "OxtUsd", "Orchid" },
+                { "RenUsd", "REN" },
+                { "XlmUsd", "Stellar" },
+                //{ "XrpUsd", "XRP" }
             };
         public static SqlConnection GetDBConnection()
         {

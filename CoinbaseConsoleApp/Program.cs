@@ -2,9 +2,6 @@
 using CoinbasePro.Shared.Types;
 using System;
 using CoinbasePro.Services.Products.Types;
-using System.IO;
-using CsvHelper;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Configuration;
@@ -29,18 +26,40 @@ namespace CoinbaseConsoleApp
             var coinbaseProClient = new CoinbasePro.CoinbaseProClient(authenticator);
 
             List<ProductType> products = new List<ProductType> {
-                ProductType.BtcUsd, 
-                ProductType.EthUsd,
-                //ProductType.XlmUsd,
-                //ProductType.BchUsd,
-                //ProductType.MkrUsd,
-                //ProductType.EosUsd
+                //ProductType.BtcUsd, 
+                //ProductType.EthUsd,
+                ProductType.XlmUsd,
+                ProductType.BchUsd,
+                ProductType.MkrUsd,
+                ProductType.EosUsd,
+                ProductType.RenUsd,
+                ProductType.AdaUsd,
+                ProductType.OxtUsd,
+                ProductType.OmgUsd,
+                ProductType.NknUsd,
+                ProductType.LrcUsd,
+                ProductType.AnkrUsd,
+                ProductType.NuUsd,
+               // ProductType.XrpUsd
             };
 
             Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
             {
-                { "BtcUsd", "Bitcoin"},
-                { "EthUsd", "Ethereum"}
+                //{ "BtcUsd", "Bitcoin"},
+                //{ "EthUsd", "Ethereum"},
+                { "AnkrUsd", "ANKR" },
+                { "AdaUsd", "Cardano" },
+                { "EosUsd", "EOS" },
+                { "LrcUsd", "Loopring" },
+                { "MkrUsd", "Maker" },
+                { "NknUsd", "NKN" },
+                { "NuUsd", "NuCypher" },
+                { "OmgUsd", "OmgNetwork" },
+                { "OxtUsd", "Orchid" },
+                { "RenUsd", "REN" },
+                { "XlmUsd", "Stellar" },
+                { "BchUsd", "BitcoinCash" }
+                //{ "XrpUsd", "XRP" },
             };
 
             DateTime endTime = DateTime.UtcNow;
@@ -49,8 +68,13 @@ namespace CoinbaseConsoleApp
                 string DBname = DBNamesDict[product.ToString()];
 
                 SqlConnection conn = DataAccess.GetDBConnection();
-                string latestTimestamp = DataAccess.GetMostRecentDataTimestamp(conn, DBname);
-                DateTime startTime = DateTime.Parse(latestTimestamp);
+               // string latestTimestamp = DataAccess.GetMostRecentDataTimestamp(conn, DBname);
+                DateTime startTime = new DateTime(2021,1,1);
+                //if (!DateTime.TryParse(latestTimestamp, out startTime))
+                //{
+                //    startTime = DateTime.Now;
+                //}
+
 
                 var history = await coinbaseProClient.ProductsService.GetHistoricRatesAsync(
                     product, 
