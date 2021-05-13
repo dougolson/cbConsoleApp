@@ -13,6 +13,12 @@ namespace CoinbaseConsoleApp
     {
         static async System.Threading.Tasks.Task Main(string[] args)
         {
+            List<string> coinsToProcess = new List<string>
+            {
+                "BtcUsd",
+                "EthUsd"
+            };
+            DataAccess dataAccess = new DataAccess(coinsToProcess);
 
             //create an authenticator with your apiKey, apiSecret and passphrase
             var authenticator = new Authenticator(
@@ -25,42 +31,42 @@ namespace CoinbaseConsoleApp
             //create the CoinbasePro client
             var coinbaseProClient = new CoinbasePro.CoinbaseProClient(authenticator);
 
-            List<ProductType> products = new List<ProductType> {
-                //ProductType.BtcUsd, 
-                //ProductType.EthUsd,
-                ProductType.XlmUsd,
-                ProductType.BchUsd,
-                ProductType.MkrUsd,
-                ProductType.EosUsd,
-                ProductType.RenUsd,
-                ProductType.AdaUsd,
-                ProductType.OxtUsd,
-                ProductType.OmgUsd,
-                ProductType.NknUsd,
-                ProductType.LrcUsd,
-                ProductType.AnkrUsd,
-                ProductType.NuUsd,
-               // ProductType.XrpUsd
-            };
+            //List<ProductType> products = new List<ProductType> {
+            //    //ProductType.BtcUsd, 
+            //    //ProductType.EthUsd,
+            //    ProductType.XlmUsd,
+            //    ProductType.BchUsd,
+            //    ProductType.MkrUsd,
+            //    ProductType.EosUsd,
+            //    ProductType.RenUsd,
+            //    ProductType.AdaUsd,
+            //    ProductType.OxtUsd,
+            //    ProductType.OmgUsd,
+            //    ProductType.NknUsd,
+            //    ProductType.LrcUsd,
+            //    ProductType.AnkrUsd,
+            //    ProductType.NuUsd,
+            //   // ProductType.XrpUsd
+            //};
 
-            Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
-            {
-                //{ "BtcUsd", "Bitcoin"},
-                //{ "EthUsd", "Ethereum"},
-                { "AnkrUsd", "ANKR" },
-                { "AdaUsd", "Cardano" },
-                { "EosUsd", "EOS" },
-                { "LrcUsd", "Loopring" },
-                { "MkrUsd", "Maker" },
-                { "NknUsd", "NKN" },
-                { "NuUsd", "NuCypher" },
-                { "OmgUsd", "OmgNetwork" },
-                { "OxtUsd", "Orchid" },
-                { "RenUsd", "REN" },
-                { "XlmUsd", "Stellar" },
-                { "BchUsd", "BitcoinCash" }
-                //{ "XrpUsd", "XRP" },
-            };
+            //Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
+            //{
+            //    //{ "BtcUsd", "Bitcoin"},
+            //    //{ "EthUsd", "Ethereum"},
+            //    { "AnkrUsd", "ANKR" },
+            //    { "AdaUsd", "Cardano" },
+            //    { "EosUsd", "EOS" },
+            //    { "LrcUsd", "Loopring" },
+            //    { "MkrUsd", "Maker" },
+            //    { "NknUsd", "NKN" },
+            //    { "NuUsd", "NuCypher" },
+            //    { "OmgUsd", "OmgNetwork" },
+            //    { "OxtUsd", "Orchid" },
+            //    { "RenUsd", "REN" },
+            //    { "XlmUsd", "Stellar" },
+            //    { "BchUsd", "BitcoinCash" }
+            //    //{ "XrpUsd", "XRP" },
+            //};
 
             DateTime endTime = DateTime.UtcNow;
             foreach (var product in products)

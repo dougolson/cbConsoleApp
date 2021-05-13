@@ -15,7 +15,15 @@ namespace CoinbaseConsoleApp
 {
     public class DataAccess
     {
-        public static Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
+        private List<string> TokensToProcess { get; set; }
+        private ConnectionString { get { return ConfigurationManager.AppSettings["connectionString"] } }
+        public DataAccess(List<string> tokensToProcess)
+        {
+            this.TokensToProcess = tokensToProcess;
+        }
+
+
+        private  Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
             {
                 { "BtcUsd", "Bitcoin"},
                 { "EthUsd", "Ethereum"},
@@ -32,17 +40,35 @@ namespace CoinbaseConsoleApp
                 { "XlmUsd", "Stellar" },
                 //{ "XrpUsd", "XRP" }
             };
-        public static SqlConnection GetDBConnection()
+
+        private List<ProductType> products = new List<ProductType> {
+                //ProductType.BtcUsd, 
+                //ProductType.EthUsd,
+                ProductType.XlmUsd,
+                ProductType.BchUsd,
+                ProductType.MkrUsd,
+                ProductType.EosUsd,
+                ProductType.RenUsd,
+                ProductType.AdaUsd,
+                ProductType.OxtUsd,
+                ProductType.OmgUsd,
+                ProductType.NknUsd,
+                ProductType.LrcUsd,
+                ProductType.AnkrUsd,
+                ProductType.NuUsd,
+               // ProductType.XrpUsd
+            };
+        private  SqlConnection GetDBConnection()
         {
             string connectionString;
             connectionString = ConfigurationManager.AppSettings["connectionString"];
-            SqlConnection cnn;
+            SqlConnection conn;
 
-		    cnn = new SqlConnection(connectionString);
-            return cnn;
+		    conn = new SqlConnection(connectionString);
+            return conn;
         }
 
-        public static int WriteCandleDataToDB(SqlConnection conn, IList<CoinbasePro.Services.Products.Models.Candle> history, string DBname)
+        private int WriteCandleDataToDB(SqlConnection conn, IList<CoinbasePro.Services.Products.Models.Candle> history, string DBname)
         {
             int recordsWritten = 0;
             conn.Open();
@@ -68,7 +94,7 @@ namespace CoinbaseConsoleApp
             return recordsWritten;
         }
 
-        public static string GetMostRecentDataTimestamp(SqlConnection conn, string DBname)
+        private string GetMostRecentDataTimestamp(SqlConnection conn, string DBname)
         {
             conn.Open();
             SqlCommand cmd;
