@@ -19,7 +19,6 @@ namespace CoinbaseConsoleApp
                 ConfigurationManager.AppSettings["apiKey"],
                 ConfigurationManager.AppSettings["unsignedSignature"],
                 ConfigurationManager.AppSettings["passPhrase"]
-        
            );
 
             //create the CoinbasePro client
@@ -67,7 +66,6 @@ namespace CoinbaseConsoleApp
             {
                 string DBname = DBNamesDict[product.ToString()];
 
-                SqlConnection conn = DataAccess.GetDBConnection();
                // string latestTimestamp = DataAccess.GetMostRecentDataTimestamp(conn, DBname);
                 DateTime startTime = new DateTime(2021,1,1);
                 //if (!DateTime.TryParse(latestTimestamp, out startTime))
@@ -83,7 +81,7 @@ namespace CoinbaseConsoleApp
                     CandleGranularity.Minutes1
                     );
                 // Write to database
-                conn = DataAccess.GetDBConnection();
+                SqlConnection conn = DataAccess.GetDBConnection();
                 int recordsWritten = DataAccess.WriteCandleDataToDB(conn, history, DBname);
 
                 // Print basic stats to console
