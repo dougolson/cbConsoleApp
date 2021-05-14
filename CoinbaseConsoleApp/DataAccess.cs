@@ -15,50 +15,25 @@ namespace CoinbaseConsoleApp
 {
     public class DataAccess
     {
-        private List<string> TokensToProcess { get; set; }
-        private ConnectionString { get { return ConfigurationManager.AppSettings["connectionString"] } }
-        public DataAccess(List<string> tokensToProcess)
+        public Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
         {
-            this.TokensToProcess = tokensToProcess;
-        }
-
-
-        private  Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
-            {
-                { "BtcUsd", "Bitcoin"},
-                { "EthUsd", "Ethereum"},
-                { "AnkrUsd", "ANKR" },
-                { "AdaUsd", "Cardano" },
-                { "EosUsd", "EOS" },
-                { "LrcUsd", "Loopring" },
-                { "MkrUsd", "Maker" },
-                { "NknUsd", "NKN" },
-                { "NuUsd", "NuCypher" },
-                { "OmgUsd", "OmgNetwork" },
-                { "OxtUsd", "Orchid" },
-                { "RenUsd", "REN" },
-                { "XlmUsd", "Stellar" },
-                //{ "XrpUsd", "XRP" }
-            };
-
-        private List<ProductType> products = new List<ProductType> {
-                //ProductType.BtcUsd, 
-                //ProductType.EthUsd,
-                ProductType.XlmUsd,
-                ProductType.BchUsd,
-                ProductType.MkrUsd,
-                ProductType.EosUsd,
-                ProductType.RenUsd,
-                ProductType.AdaUsd,
-                ProductType.OxtUsd,
-                ProductType.OmgUsd,
-                ProductType.NknUsd,
-                ProductType.LrcUsd,
-                ProductType.AnkrUsd,
-                ProductType.NuUsd,
-               // ProductType.XrpUsd
-            };
-        private  SqlConnection GetDBConnection()
+            { "AdaUsd", "Cardano" },
+            { "AnkrUsd", "ANKR" },
+            { "BchUsd", "BitcoinCash" },
+            { "BtcUsd", "Bitcoin"},
+            { "EosUsd", "EOS" },
+            { "EthUsd", "Ethereum"},
+            { "LrcUsd", "Loopring" },
+            { "MkrUsd", "Maker" },
+            { "NknUsd", "NKN" },
+            { "NuUsd", "NuCypher" },
+            { "OmgUsd", "OmgNetwork" },
+            { "OxtUsd", "Orchid" },
+            { "RenUsd", "REN" },
+            { "XlmUsd", "Stellar" }
+            //{ "XrpUsd", "XRP" },
+        };
+        private SqlConnection GetDBConnection()
         {
             string connectionString;
             connectionString = ConfigurationManager.AppSettings["connectionString"];
@@ -68,8 +43,9 @@ namespace CoinbaseConsoleApp
             return conn;
         }
 
-        private int WriteCandleDataToDB(SqlConnection conn, IList<CoinbasePro.Services.Products.Models.Candle> history, string DBname)
+        public int WriteCandleDataToDB( IList<CoinbasePro.Services.Products.Models.Candle> history, string DBname)
         {
+            SqlConnection conn = GetDBConnection();
             int recordsWritten = 0;
             conn.Open();
             // History comes newest to oldest, loop backwards to make db idx follow oldest to newest
@@ -94,8 +70,9 @@ namespace CoinbaseConsoleApp
             return recordsWritten;
         }
 
-        private string GetMostRecentDataTimestamp(SqlConnection conn, string DBname)
+        public string GetMostRecentDataTimestamp( string DBname)
         {
+            SqlConnection conn = GetDBConnection();
             conn.Open();
             SqlCommand cmd;
             SqlDataReader dreader;
