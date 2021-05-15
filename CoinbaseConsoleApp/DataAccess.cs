@@ -15,7 +15,7 @@ namespace CoinbaseConsoleApp
 {
     public class DataAccess
     {
-        public Dictionary<string, string> DBNamesDict = new Dictionary<string, string>()
+        public Dictionary<string, string> DBTableNamesDict = new Dictionary<string, string>()
         {
             { "AdaUsd", "Cardano" },
             { "AnkrUsd", "ANKR" },
@@ -43,7 +43,7 @@ namespace CoinbaseConsoleApp
             return conn;
         }
 
-        public int WriteCandleDataToDB( IList<CoinbasePro.Services.Products.Models.Candle> history, string DBname)
+        public int WriteCandleDataToDB( IList<CoinbasePro.Services.Products.Models.Candle> history, string tableName)
         {
             SqlConnection conn = GetDBConnection();
             int recordsWritten = 0;
@@ -59,7 +59,7 @@ namespace CoinbaseConsoleApp
                 var close = candle.Close;
                 var vol = candle.Volume;
 
-                string sql = $"BEGIN IF '{time}' NOT IN(SELECT Time FROM {DBname}) INSERT INTO {DBname} ([Time],[High],[Low],[Open],[Close],[Volume]) VALUES('{time}',{high},{low},{open},{close},{vol}) END";
+                string sql = $"BEGIN IF '{time}' NOT IN(SELECT Time FROM {tableName}) INSERT INTO {tableName} ([Time],[High],[Low],[Open],[Close],[Volume]) VALUES('{time}',{high},{low},{open},{close},{vol}) END";
                    
                 SqlCommand cmd = new SqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
@@ -70,27 +70,42 @@ namespace CoinbaseConsoleApp
             return recordsWritten;
         }
 
-        public string GetMostRecentDataTimestamp( string DBname)
+        public string GetMostRecentDataTimestamp( string tableName)
+        {
+            string sql = $"Select MAX(Time) from {tableName}";
+            return Query(tableName, sql);
+        }
+
+        public string GetHistoricalHigh(string tableName)
+        {
+            string sql = $"Select MAX(High) from {tableName}";
+            return Query(tableName, sql);
+        }
+
+        public string Get24HourHigh(string tableName)
+        {
+            string sql = $"SELECT MAX(High) FROM {tableName} WHERE[Time] >= CONVERT(VARCHAR(20),DATEADD(DAY,-1, GETDATE()), 100)";
+            return Query(tableName, sql);
+        }
+        
+
+        private string Query (string tableName, string sql)
         {
             SqlConnection conn = GetDBConnection();
             conn.Open();
             SqlCommand cmd;
-            SqlDataReader dreader;
-            string sql, output = "";
-            sql = $"Select MAX(Time) from {DBname}";
+            SqlDataReader reader;
+            string output = "";
             cmd = new SqlCommand(sql, conn);
-            dreader = cmd.ExecuteReader();
-
-            while (dreader.Read())
+            reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                output = output + dreader.GetValue(0);
+                output = output + reader.GetValue(0);
             }
-            dreader.Close();
+            reader.Close();
             cmd.Dispose();
             conn.Close();
             return output;
         }
-
-
     }
 }

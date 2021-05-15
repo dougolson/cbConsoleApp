@@ -42,6 +42,7 @@ namespace CoinbaseConsoleApp
 
             //create the CoinbasePro client
             var coinbaseProClient = new CoinbasePro.CoinbaseProClient(authenticator);
+            /*
             var accounts = await coinbaseProClient.AccountsService.GetAllAccountsAsync();
             List<string> accountIDs = new List<string>();
             foreach(var account in accounts)
@@ -59,20 +60,22 @@ namespace CoinbaseConsoleApp
                 Console.WriteLine($"Amount: {data.Amount}\tBalance: {data.Balance}\tDate: {data.CreatedAt}\tProduct: {data.Details.ProductId}");
             }
             Console.ReadKey();
-/*
-            DataAccess dataAccess = new DataAccess();
+ */
             DateTime endTime = DateTime.UtcNow;
+            DataAccess dataAccess = new DataAccess();
+
             foreach (var token in tokensToProcess)
             {
-                string DbName = dataAccess.DBNamesDict[token];
+                string tableName = dataAccess.DBTableNamesDict[token];
+                string historicalHigh = dataAccess.GetHistoricalHigh(tableName);
+                string lastDayHigh = dataAccess.Get24HourHigh(tableName);
+                string latestTimestamp = dataAccess.GetMostRecentDataTimestamp(tableName);
                 ProductType product = (ProductType)Enum.Parse(typeof(ProductType), token);
-                string latestTimestamp = dataAccess.GetMostRecentDataTimestamp(DbName);
                 //DateTime startTime = new DateTime(2021,1,1);
                 if (!DateTime.TryParse(latestTimestamp, out DateTime startTime))
                 {
                     startTime = DateTime.Now;
                 }
-
 
                 var history = await coinbaseProClient.ProductsService.GetHistoricRatesAsync(
                     product, 
@@ -81,13 +84,16 @@ namespace CoinbaseConsoleApp
                     CandleGranularity.Minutes1
                     );
                 // Write to database
-               
-                int recordsWritten = dataAccess.WriteCandleDataToDB(history, DbName);
+
+                int recordsWritten = dataAccess.WriteCandleDataToDB(history, tableName);
 
                 // Print basic stats to console
                 var current = history[0];
-                Console.WriteLine($"Current Stats: {DbName}");
+                Console.WriteLine($"Current Stats: {tableName}");
                 Console.WriteLine("------------------");
+                Console.WriteLine($"Db Historical High: {historicalHigh}");
+                Console.WriteLine($"24 Hour High: {lastDayHigh}");
+                Console.WriteLine($"24 Hour % Change: {100 * (current.High / StringToDecimal(lastDayHigh) -1):F}%");
                 Console.WriteLine($"High:   {current.High}");
                 Console.WriteLine($"Low:    {current.Low}");
                 Console.WriteLine($"Open:   {current.Open}");
@@ -96,7 +102,16 @@ namespace CoinbaseConsoleApp
                 Console.WriteLine($"{recordsWritten} records written.");
                 Console.WriteLine("------------------");
             }
-*/
+            
+            decimal StringToDecimal(string num)
+            {
+                if (!decimal.TryParse(num, out decimal number))
+                {
+                    return 1;
+                }
+                return number;
+            }
+
         }
     }
 }
